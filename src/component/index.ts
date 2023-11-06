@@ -1,0 +1,1 @@
+export { Modall } from "./Modall";

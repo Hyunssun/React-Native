@@ -7,61 +7,88 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+import { useRecoilState } from "recoil";
+import { ModalState } from "../store/modalState";
+import { Modall } from "../component";
+import { laptop } from "../../public/image/laptop";
 
-let a1 = require("../../public/image/laptop/1.jpg");
-let a2 = require("../../public/image/laptop/2.jpg");
-let a3 = require("../../public/image/laptop/3.jpg");
-let a4 = require("../../public/image/laptop/4.jpg");
-let a5 = require("../../public/image/laptop/5.jpg");
-let a6 = require("../../public/image/laptop/6.jpg");
-let a7 = require("../../public/image/laptop/7.jpg");
-let a8 = require("../../public/image/laptop/8.jpg");
-let a9 = require("../../public/image/laptop/9.jpg");
+export const Gallery = () => {
+  const [modalState, setModalState] = useRecoilState(ModalState);
 
-import { createNativeStackNavigator } from "react-native-screens/native-stack";
-
-const Stack = createNativeStackNavigator();
-
-const Gallery = () => {
-  const handleButtonPress = () => {
-    console.log(`누름`);
+  const onClickButton = (num: any) => {
+    setModalState({ ...modalState, open: true, num: num });
   };
 
   return (
     <View style={styles.container}>
+      <Modall />
       <Text style={styles.text}>갤러리</Text>
 
       <View style={styles.image_container}>
-        <TouchableOpacity onPress={handleButtonPress}>
-          <Image style={styles.image} source={a1} />
+        <TouchableOpacity
+          onPress={() => {
+            onClickButton(laptop.a1);
+          }}
+        >
+          <Image style={styles.image} source={laptop.a1} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleButtonPress}>
-          <Image style={styles.image} source={a2} />
+        <TouchableOpacity
+          onPress={() => {
+            onClickButton(laptop.a2);
+          }}
+        >
+          <Image style={styles.image} source={laptop.a2} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleButtonPress}>
-          <Image style={styles.image} source={a3} />
+        <TouchableOpacity
+          onPress={() => {
+            onClickButton(laptop.a3);
+          }}
+        >
+          <Image style={styles.image} source={laptop.a3} />
         </TouchableOpacity>
-      </View>
-      <View style={styles.image_container}>
-        <TouchableOpacity onPress={handleButtonPress}>
-          <Image style={styles.image} source={a4} />
+
+        <TouchableOpacity
+          onPress={() => {
+            onClickButton(laptop.a4);
+          }}
+        >
+          <Image style={styles.image} source={laptop.a4} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleButtonPress}>
-          <Image style={styles.image} source={a5} />
+        <TouchableOpacity
+          onPress={() => {
+            onClickButton(laptop.a5);
+          }}
+        >
+          <Image style={styles.image} source={laptop.a5} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleButtonPress}>
-          <Image style={styles.image} source={a6} />
+        <TouchableOpacity
+          onPress={() => {
+            onClickButton(laptop.a6);
+          }}
+        >
+          <Image style={styles.image} source={laptop.a6} />
         </TouchableOpacity>
-      </View>
-      <View style={styles.image_container}>
-        <TouchableOpacity onPress={handleButtonPress}>
-          <Image style={styles.image} source={a7} />
+
+        <TouchableOpacity
+          onPress={() => {
+            onClickButton(laptop.a7);
+          }}
+        >
+          <Image style={styles.image} source={laptop.a7} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleButtonPress}>
-          <Image style={styles.image} source={a8} />
+        <TouchableOpacity
+          onPress={() => {
+            onClickButton(laptop.a8);
+          }}
+        >
+          <Image style={styles.image} source={laptop.a8} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleButtonPress}>
-          <Image style={styles.image} source={a9} />
+        <TouchableOpacity
+          onPress={() => {
+            onClickButton(laptop.a9);
+          }}
+        >
+          <Image style={styles.image} source={laptop.a9} />
         </TouchableOpacity>
       </View>
     </View>
@@ -83,6 +110,7 @@ const styles = StyleSheet.create({
   image: {
     width: 100,
     height: 100,
+    margin: 15,
   },
   image_container: {
     flex: 1,
@@ -93,5 +121,3 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 });
-
-export default Gallery;

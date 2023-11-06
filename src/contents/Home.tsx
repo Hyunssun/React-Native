@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
 
-const Home: React.FC<{ navigation: any }> = ({ navigation }) => {
+export const Home: React.FC<{ navigation: any }> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>홈</Text>
@@ -61,5 +61,3 @@ const styles = StyleSheet.create({
     color: "white",
   },
 });
-
-export default Home;
