@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Ionicons";
 import { RecoilRoot } from "recoil";
-import { Home, Gallery } from "./src/contents";
+import { Home, Gallery, Information, Location } from "./src/contents";
 
 const Tab = createBottomTabNavigator();
 
@@ -27,6 +27,28 @@ export default function App() {
             options={{
               tabBarIcon: () => (
                 <Icon name="images-outline" size={30} color="black" />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Location"
+            component={Location}
+            options={{
+              tabBarIcon: () => (
+                <Icon name="location-outline" size={30} color="black" />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Information"
+            component={Information}
+            options={{
+              tabBarIcon: () => (
+                <Icon
+                  name="information-circle-outline"
+                  size={30}
+                  color="black"
+                />
               ),
             }}
           />
