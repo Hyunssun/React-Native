@@ -71,9 +71,9 @@ const arr = [
 export const Information = () => {
   return (
     <ScrollView style={styles.container}>
-      {arr.map((item: any) => {
+      {arr.map((item: any, index: number) => {
         return (
-          <View style={styles.info}>
+          <View key={item.title + index} style={styles.info}>
             <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.text}>{item.text}</Text>
           </View>

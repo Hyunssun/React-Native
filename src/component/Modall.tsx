@@ -17,7 +17,7 @@ export const iconPath = {
   activeIcon: require("../../public/image/laptop/9.jpg"),
 };
 
-export const Modall: React.FC = () => {
+export const Modall = () => {
   const [modalState, setModalState] = useRecoilState(ModalState);
 
   const toggleModal = () => {
