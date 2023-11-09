@@ -18,49 +18,54 @@ export const Home = () => {
   const [weatherData, setWeatherData] = useState<any>(null);
   const [refresh, setRefresh] = useState<boolean>(false);
 
+  // 위치 받아오기
   useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.error("Permission to access location was denied");
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-
-      if (location) {
-        const { latitude, longitude } = location.coords;
-        const addressResponse = await Location.reverseGeocodeAsync({
-          latitude,
-          longitude,
-        });
-        if (addressResponse && addressResponse.length > 0) {
-          const city = addressResponse[0].city;
-          setLocationState({
-            ...locationState,
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            timestamp: location.timestamp,
-            city: city,
-          });
-        }
-      }
-    })();
+    if (locationState.city === "") {
+      getLocation();
+    }
   }, []);
+  const getLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      console.error("Permission to access location was denied");
+      return;
+    }
 
+    let location = await Location.getCurrentPositionAsync({});
+
+    if (location) {
+      const { latitude, longitude } = location.coords;
+      const addressResponse = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
+      if (addressResponse && addressResponse.length > 0) {
+        const city = addressResponse[0].city;
+        setLocationState({
+          ...locationState,
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          timestamp: location.timestamp,
+          city: city,
+        });
+      }
+    }
+  };
+
+  // 날씨 받아오기
   useEffect(() => {
     console.log(`locationState`, locationState);
     if (locationState.city !== "") {
       fetchWeatherData();
     }
   }, [locationState, refresh]);
-
   const fetchWeatherData = async () => {
     const data = await getWeather(locationState.city);
     setWeatherData(data);
     console.log(data);
   };
 
+  // 새로고침
   const onClickButton = () => {
     setRefresh(!refresh);
   };
@@ -68,7 +73,7 @@ export const Home = () => {
   return (
     <View style={styles.container}>
       {weatherData === null ? (
-        <View style={styles.loading}>
+        <View style={styles.container2}>
           <ActivityIndicator
             color="white"
             style={{ marginTop: 10 }}
@@ -76,9 +81,8 @@ export const Home = () => {
           />
         </View>
       ) : (
-        <View style={styles.weather_container}>
+        <View style={styles.container2}>
           <TouchableOpacity
-            style={styles.icon_container}
             onPress={() => {
               onClickButton();
             }}
@@ -92,11 +96,11 @@ export const Home = () => {
               justifyContent: "space-between",
             }}
           >
-            <Text style={styles.weather_container_name}>
+            <Text style={{ color: "white", fontSize: 60 }}>
               {locationState.city}
             </Text>
           </View>
-          <View style={styles.image_container}>
+          <View>
             <Image
               style={styles.image}
               source={{
@@ -104,14 +108,14 @@ export const Home = () => {
               }}
             />
           </View>
-          <Text style={styles.weather_container_temp}>
+          <Text style={{ color: "white", fontSize: 90 }}>
             {Math.round(weatherData.main.temp)}°C
           </Text>
-          <Text style={styles.weather_container_description}>
+          <Text style={{ color: "white", fontSize: 30 }}>
             {weatherData.weather[0].description}
           </Text>
 
-          <Text style={styles.weather_container_text}>
+          <Text style={{ color: "white", fontSize: 20 }}>
             {Math.floor(weatherData.main.temp_max)}°&nbsp;/&nbsp;
             {Math.floor(weatherData.main.temp_min)}° &nbsp;&nbsp; 체감
             온도&nbsp;&nbsp;
@@ -128,39 +132,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "skyblue",
   },
-  loading: {
+  container2: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  weather_container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  weather_container_name: {
-    color: "white",
-    fontSize: 60,
-  },
-  weather_container_temp: {
-    color: "white",
-    fontSize: 90,
-  },
-  weather_container_description: {
-    color: "white",
-    fontSize: 30,
-  },
-  weather_container_text: {
-    color: "white",
-    fontSize: 20,
-  },
-  icon_container: {
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
-  },
-  image_container: {},
-
   image: {
     width: 200,
     height: 200,
