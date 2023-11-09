@@ -27,7 +27,7 @@ export const Modall = () => {
   return (
     <Modal isVisible={modalState.open}>
       <View style={styles.container}>
-        <TouchableOpacity onPress={toggleModal}>
+        <TouchableOpacity style={styles.image_div} onPress={toggleModal}>
           <Image style={styles.image} source={modalState.num} />
         </TouchableOpacity>
       </View>
@@ -38,12 +38,11 @@ export const Modall = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  image_div: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-
-  image: {
-    width: 300,
-    height: 300,
-  },
+  image: { width: 450, height: 450 },
 });

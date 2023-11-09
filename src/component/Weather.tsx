@@ -1,72 +1,95 @@
 import React, { useState, useEffect } from "react";
-import { View, Image, Text, StyleSheet, TextInput, Button } from "react-native";
+import {
+  View,
+  Image,
+  Text,
+  StyleSheet,
+  TextInput,
+  Button,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import { getWeather } from "../api/WeatherAPI";
+import { useRecoilState } from "recoil";
+import { LocationState } from "../store/locationState";
 import Icon from "react-native-vector-icons/Ionicons";
 
-const icon = {
-  맑음: "sunny-outline",
-  "약간 구름": "partly-sunny-outline",
-  "scattered clouds": "cloud-outline",
-  "broken clouds": "cloud-outline",
-  "shower rain": "rainy-outline",
-  rain: "rainy-outline",
-  thunderstorm: "thunderstorm-outline",
-  snow: "snow-outline",
-  mist: "reorder-four-outline",
-};
-
 export const Weather = () => {
-  const [city, setCity] = useState<string>("Seoul");
+  const [locationState, setLocationState] = useRecoilState(LocationState);
   const [weatherData, setWeatherData] = useState<any>(null);
+  const [refresh, setRefresh] = useState<boolean>(false);
+
+  useEffect(() => {
+    console.log(`locationState`, locationState);
+    if (locationState.city !== "") {
+      fetchWeatherData();
+    }
+  }, [locationState, refresh]);
 
   const fetchWeatherData = async () => {
-    const data = await getWeather(city);
+    const data = await getWeather(locationState.city);
     setWeatherData(data);
     console.log(data);
   };
 
-  useEffect(() => {
-    fetchWeatherData();
-  }, []);
+  const onClickButton = () => {
+    setRefresh(!refresh);
+  };
 
   return (
     <View style={styles.container}>
-      {weatherData && (
-        <View style={styles.weather}>
-          <View style={styles.weatherInfo}>
-            <Text style={styles.weatherInfoTemp}>
-              {Math.round(weatherData.main.temp)}°C
-            </Text>
-            <Text style={styles.weatherInfodescription}>
-              {weatherData.weather[0].description}
-            </Text>
-            <Text style={styles.weatherInfoname}>{weatherData.name}</Text>
-            <Text style={styles.weatherInfoText}>
-              {Math.floor(weatherData.main.temp_max)}°&nbsp;/&nbsp;
-              {Math.floor(weatherData.main.temp_min)}° &nbsp;&nbsp; 체감
-              온도&nbsp;&nbsp;
-              {Math.floor(weatherData.main.feels_like)}°
+      {weatherData === null ? (
+        <View style={styles.loading}>
+          <ActivityIndicator
+            color="white"
+            style={{ marginTop: 10 }}
+            size="large"
+          />
+        </View>
+      ) : (
+        <View style={styles.weather_container}>
+          <TouchableOpacity
+            style={styles.icon_container}
+            onPress={() => {
+              onClickButton();
+            }}
+          >
+            <Icon name="refresh-circle-outline" size={50} color="white" />
+          </TouchableOpacity>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text style={styles.weather_container_name}>
+              {locationState.city}
             </Text>
           </View>
-          <View style={styles.iconView}>
+          <View style={styles.image_container}>
             <Image
-              style={styles.icon}
+              style={styles.image}
               source={{
                 uri: `http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`,
               }}
             />
           </View>
+          <Text style={styles.weather_container_temp}>
+            {Math.round(weatherData.main.temp)}°C
+          </Text>
+          <Text style={styles.weather_container_description}>
+            {weatherData.weather[0].description}
+          </Text>
+
+          <Text style={styles.weather_container_text}>
+            {Math.floor(weatherData.main.temp_max)}°&nbsp;/&nbsp;
+            {Math.floor(weatherData.main.temp_min)}° &nbsp;&nbsp; 체감
+            온도&nbsp;&nbsp;
+            {Math.floor(weatherData.main.feels_like)}°
+          </Text>
         </View>
       )}
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.input}
-          placeholder="지역 입력"
-          value={city}
-          onChangeText={(text) => setCity(text)}
-        />
-        <Button title="날씨 불러오기" onPress={fetchWeatherData} />
-      </View>
     </View>
   );
 };
@@ -74,54 +97,43 @@ export const Weather = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
-    alignItems: "center",
-  },
-  inputView: {
-    flexDirection: "row",
-    marginTop: 20,
-    justifyContent: "center",
-  },
-  input: {
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    paddingLeft: 10,
-    width: "50%",
-  },
-  weather: {
-    width: "100%",
     backgroundColor: "skyblue",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingVertical: 14,
   },
-  weatherInfo: {
-    justifyContent: "center",
-  },
-  weatherInfoText: {
-    color: "white",
-    fontSize: 16,
-  },
-  weatherInfoTemp: {
-    color: "white",
-    fontSize: 45,
-  },
-  weatherInfodescription: {
-    color: "white",
-    fontSize: 24,
-    marginBottom: 10,
-  },
-  weatherInfoname: {
-    color: "white",
-    fontSize: 18,
-  },
-  iconView: {
+  loading: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  icon: {
-    width: 100,
-    height: 100,
+  weather_container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  weather_container_name: {
+    color: "white",
+    fontSize: 60,
+  },
+  weather_container_temp: {
+    color: "white",
+    fontSize: 90,
+  },
+  weather_container_description: {
+    color: "white",
+    fontSize: 30,
+  },
+  weather_container_text: {
+    color: "white",
+    fontSize: 20,
+  },
+  icon_container: {
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
+  },
+  image_container: {},
+
+  image: {
+    width: 200,
+    height: 200,
   },
 });

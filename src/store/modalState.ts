@@ -1,10 +1,10 @@
 import { atom } from "recoil";
 
-type stateTpye = { open: boolean; num: any };
+type stateType = { open: boolean; num: any };
 
 export const ModalState = atom({
   key: "modalState",
-  default: <stateTpye>{
+  default: <stateType>{
     open: false,
     num: "",
   },

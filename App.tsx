@@ -1,17 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Ionicons";
+import { Home, Gallery, Information, Map } from "./src/contents";
+import { StyleSheet } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { RecoilRoot } from "recoil";
-import { Home, Gallery, Information, Location } from "./src/contents";
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
     <RecoilRoot>
+      <StatusBar style="light" />
       <NavigationContainer>
-        <Tab.Navigator>
+        <Tab.Navigator screenOptions={{ headerShown: false }}>
           <Tab.Screen
             name="Home"
             component={Home}
@@ -19,6 +22,7 @@ export default function App() {
               tabBarIcon: () => (
                 <Icon name="home-outline" size={30} color="black" />
               ),
+              unmountOnBlur: true,
             }}
           />
           <Tab.Screen
@@ -28,15 +32,17 @@ export default function App() {
               tabBarIcon: () => (
                 <Icon name="images-outline" size={30} color="black" />
               ),
+              unmountOnBlur: true,
             }}
           />
           <Tab.Screen
-            name="Location"
-            component={Location}
+            name="Map"
+            component={Map}
             options={{
               tabBarIcon: () => (
-                <Icon name="location-outline" size={30} color="black" />
+                <Icon name="map-outline" size={30} color="black" />
               ),
+              unmountOnBlur: true,
             }}
           />
           <Tab.Screen
@@ -50,6 +56,7 @@ export default function App() {
                   color="black"
                 />
               ),
+              unmountOnBlur: true,
             }}
           />
         </Tab.Navigator>
@@ -57,3 +64,10 @@ export default function App() {
     </RecoilRoot>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "skyblue",
+  },
+});

@@ -1,21 +1,28 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import { useRecoilState } from "recoil";
+import { LocationState } from "../store/locationState";
 
-export const Location = () => {
+export const Map = () => {
+  const [locationState, setLocationState] = useRecoilState(LocationState);
+
   return (
     <View style={styles.container}>
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: 37.2493642,
-          longitude: 127.0476374,
+          latitude: locationState.latitude,
+          longitude: locationState.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
       >
         <Marker
-          coordinate={{ latitude: 37.2493642, longitude: 127.0476374 }}
+          coordinate={{
+            latitude: locationState.latitude,
+            longitude: locationState.longitude,
+          }}
           title="Marker Title"
           description="Marker Description"
         />
