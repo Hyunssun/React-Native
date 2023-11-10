@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+import { theme } from "../colors";
 
 let a1 = require("../../public/image/laptop/1.jpg");
 let a2 = require("../../public/image/laptop/2.jpg");
@@ -334,7 +335,7 @@ export const Gallery = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "black" },
+  container: { flex: 1, backgroundColor: theme.bg },
 
   select_container: {
     flex: 5,

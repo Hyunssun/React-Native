@@ -2,25 +2,32 @@ import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Ionicons";
-import { Home, Gallery, Information, Map } from "./src/contents";
+import { Home, Gallery, Information, Map, Todo } from "./src/contents";
 import { StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { RecoilRoot } from "recoil";
+import { theme } from "./src/colors";
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
     <RecoilRoot>
-      <StatusBar style="light" />
       <NavigationContainer>
-        <Tab.Navigator screenOptions={{ headerShown: false }}>
+        <Tab.Navigator
+          screenOptions={{
+            headerShown: false,
+
+            tabBarShowLabel: false,
+            tabBarActiveTintColor: theme.point,
+          }}
+        >
           <Tab.Screen
             name="Home"
             component={Home}
             options={{
-              tabBarIcon: () => (
-                <Icon name="home-outline" size={30} color="black" />
+              tabBarIcon: ({ color, size }) => (
+                <Icon name="home-outline" color={color} size={size} />
               ),
               unmountOnBlur: true,
             }}
@@ -29,8 +36,8 @@ export default function App() {
             name="Gallery"
             component={Gallery}
             options={{
-              tabBarIcon: () => (
-                <Icon name="images-outline" size={30} color="black" />
+              tabBarIcon: ({ color, size }) => (
+                <Icon name="images-outline" color={color} size={size} />
               ),
               unmountOnBlur: true,
             }}
@@ -39,8 +46,18 @@ export default function App() {
             name="Map"
             component={Map}
             options={{
-              tabBarIcon: () => (
-                <Icon name="map-outline" size={30} color="black" />
+              tabBarIcon: ({ color, size }) => (
+                <Icon name="map-outline" color={color} size={size} />
+              ),
+              unmountOnBlur: true,
+            }}
+          />
+          <Tab.Screen
+            name="Todo"
+            component={Todo}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <Icon name="checkbox-outline" color={color} size={size} />
               ),
               unmountOnBlur: true,
             }}
@@ -49,11 +66,11 @@ export default function App() {
             name="Information"
             component={Information}
             options={{
-              tabBarIcon: () => (
+              tabBarIcon: ({ color, size }) => (
                 <Icon
                   name="information-circle-outline"
-                  size={30}
-                  color="black"
+                  color={color}
+                  size={size}
                 />
               ),
               unmountOnBlur: true,
@@ -64,10 +81,3 @@ export default function App() {
     </RecoilRoot>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "skyblue",
-  },
-});

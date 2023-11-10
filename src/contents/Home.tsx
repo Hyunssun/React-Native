@@ -12,6 +12,7 @@ import { useRecoilState } from "recoil";
 import { LocationState } from "../store/locationState";
 import { getWeather } from "../api/WeatherAPI";
 import Icon from "react-native-vector-icons/Ionicons";
+import { theme } from "../colors";
 
 export const Home = () => {
   const [locationState, setLocationState] = useRecoilState(LocationState);
@@ -23,7 +24,7 @@ export const Home = () => {
     if (locationState.city === "") {
       getLocation();
     }
-  }, []);
+  }, [locationState, refresh]);
   const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -54,7 +55,6 @@ export const Home = () => {
 
   // 날씨 받아오기
   useEffect(() => {
-    console.log(`locationState`, locationState);
     if (locationState.city !== "") {
       fetchWeatherData();
     }
@@ -62,7 +62,6 @@ export const Home = () => {
   const fetchWeatherData = async () => {
     const data = await getWeather(locationState.city);
     setWeatherData(data);
-    console.log(data);
   };
 
   // 새로고침
@@ -87,7 +86,7 @@ export const Home = () => {
               onClickButton();
             }}
           >
-            <Icon name="refresh-circle-outline" size={50} color="white" />
+            <Icon name="refresh-circle-outline" size={50} color={theme.grey} />
           </TouchableOpacity>
           <View
             style={{
@@ -96,7 +95,7 @@ export const Home = () => {
               justifyContent: "space-between",
             }}
           >
-            <Text style={{ color: "white", fontSize: 60 }}>
+            <Text style={{ color: theme.grey, fontSize: 60 }}>
               {locationState.city}
             </Text>
           </View>
@@ -108,14 +107,14 @@ export const Home = () => {
               }}
             />
           </View>
-          <Text style={{ color: "white", fontSize: 90 }}>
+          <Text style={{ color: theme.grey, fontSize: 90 }}>
             {Math.round(weatherData.main.temp)}°C
           </Text>
-          <Text style={{ color: "white", fontSize: 30 }}>
+          <Text style={{ color: theme.grey, fontSize: 30 }}>
             {weatherData.weather[0].description}
           </Text>
 
-          <Text style={{ color: "white", fontSize: 20 }}>
+          <Text style={{ color: theme.grey, fontSize: 20 }}>
             {Math.floor(weatherData.main.temp_max)}°&nbsp;/&nbsp;
             {Math.floor(weatherData.main.temp_min)}° &nbsp;&nbsp; 체감
             온도&nbsp;&nbsp;
@@ -130,7 +129,7 @@ export const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "skyblue",
+    backgroundColor: theme.bg,
   },
   container2: {
     flex: 1,
