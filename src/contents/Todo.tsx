@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,28 +13,27 @@ import { theme } from "../colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
 
-const STORAGE_KEY = "@toDos";
-
 export const Todo = () => {
-  const [working, setWorking] = useState<boolean>(true);
+  const textInputRef = useRef<TextInput>(null);
+  const [todo, setTodo] = useState<boolean>(true);
+  const [toDoList, setToDoList] = useState<any>({});
   const [text, setText] = useState<string>("");
-  const [toDos, setToDos] = useState<any>({});
+  const [editText, setEditText] = useState<string>("");
 
   // 입력
   const onSubmitToDo = async () => {
     if (text === "") {
       return;
     }
-    const newToDos = { [Date.now()]: { text, working }, ...toDos };
-    console.log(newToDos);
-    setToDos(newToDos);
-    await save(newToDos);
+    const newToDoList = { [Date.now()]: { text, todo }, ...toDoList };
+    setToDoList(newToDoList);
+    await save(newToDoList);
     setText("");
   };
 
   // 저장
   const save = async (toSave: any) => {
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+    await AsyncStorage.setItem("toDos", JSON.stringify(toSave));
   };
 
   // 불러오기
@@ -42,31 +41,38 @@ export const Todo = () => {
     load();
   }, []);
   const load = async () => {
-    const s = await AsyncStorage.getItem(STORAGE_KEY);
+    const s = await AsyncStorage.getItem("toDos");
     if (s) {
-      setToDos(JSON.parse(s));
+      setToDoList(JSON.parse(s));
     }
+  };
+
+  //수정 버튼 클릭
+  const onClickEdit = (key: string | number) => {
+    if (textInputRef.current) {
+      textInputRef.current.focus();
+    }
+    const newToDoList = { ...toDoList };
+    newToDoList[key].isEdit = true;
+    setToDoList(newToDoList);
+    setEditText(newToDoList[key].text);
+  };
+
+  // 수정
+  const onClickSave = (key: string | number) => {
+    const newToDoList = { ...toDoList };
+    newToDoList[key].text = editText;
+    newToDoList[key].isEdit = false;
+    setToDoList(newToDoList);
+    setEditText("");
   };
 
   // 삭제
   const onClickDelete = (key: string | number) => {
-    const newToDos = { ...toDos };
-    delete newToDos[key];
-    setToDos(newToDos);
-    save(newToDos);
-    // Alert.alert("Delete To Do", "Are you sure?", [
-    //   { text: "Cancel" },
-    //   {
-    //     text: "I'm Sure",
-    //     style: "destructive",
-    //     onPress: () => {
-    //       const newToDos = { ...toDos };
-    //       delete newToDos[key];
-    //       setToDos(newToDos);
-    //       save(newToDos);
-    //     },
-    //   },
-    // ]);
+    const newToDoList = { ...toDoList };
+    delete newToDoList[key];
+    setToDoList(newToDoList);
+    save(newToDoList);
   };
 
   return (
@@ -74,50 +80,80 @@ export const Todo = () => {
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
-            setWorking(true);
+            setTodo(true);
           }}
         >
           <Text
             style={{
               ...styles.btnText,
-              color: working ? theme.point : theme.grey,
+              color: todo ? theme.point : theme.grey,
             }}
           >
-            Work
+            ToDo
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            setWorking(false);
+            setTodo(false);
           }}
         >
           <Text
             style={{
               ...styles.btnText,
-              color: !working ? theme.point : theme.grey,
+              color: !todo ? theme.point : theme.grey,
             }}
           >
-            Travel
+            Shopping
           </Text>
         </TouchableOpacity>
       </View>
       <TextInput
         style={styles.input}
         value={text}
-        placeholder={working ? "Add a To Do" : "Where do you want to go?"}
-        onChangeText={(val) => setText(val)}
+        placeholder={
+          todo ? "할 일을 입력해주세요" : "구매할 물건을 입력해주세요"
+        }
+        onChangeText={setText}
         onSubmitEditing={onSubmitToDo}
         blurOnSubmit={false}
       />
       <ScrollView>
-        {Object.keys(toDos).map(
+        {Object.keys(toDoList).map(
           (key: any) =>
-            working === toDos[key].working && (
+            todo === toDoList[key].todo && (
               <View style={styles.toDo} key={key}>
-                <Text style={styles.toDoText}>{toDos[key].text}</Text>
-                <TouchableOpacity onPress={() => onClickDelete(key)}>
-                  <Icon name="trash-outline" size={22} color="white" />
-                </TouchableOpacity>
+                {toDoList[key].isEdit ? (
+                  <TextInput
+                    ref={textInputRef}
+                    onChangeText={setEditText}
+                    value={editText}
+                    style={styles.toDoEdit}
+                  />
+                ) : (
+                  <Text style={styles.toDoText}>{toDoList[key].text}</Text>
+                )}
+
+                <View style={styles.toDoIcon}>
+                  {toDoList[key].isEdit ? (
+                    <TouchableOpacity
+                      style={{ marginRight: 10 }}
+                      onPress={() => onClickSave(key)}
+                    >
+                      <Icon name="save-outline" size={22} color="black" />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={{ marginRight: 10 }}
+                      onPress={() => onClickEdit(key)}
+                    >
+                      <Icon name="create-outline" size={22} color="black" />
+                    </TouchableOpacity>
+                  )}
+
+                  <TouchableOpacity onPress={() => onClickDelete(key)}>
+                    <Icon name="trash-outline" size={22} color="black" />
+                  </TouchableOpacity>
+                </View>
               </View>
             )
         )}
@@ -135,7 +171,7 @@ const styles = StyleSheet.create({
   header: {
     justifyContent: "space-between",
     flexDirection: "row",
-    marginTop: 100,
+    marginTop: 80,
   },
   btnText: {
     fontSize: 38,
@@ -145,24 +181,42 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingVertical: 15,
     paddingHorizontal: 20,
+
     borderRadius: 30,
+    borderBottomLeftRadius: 0,
+
     marginVertical: 20,
     fontSize: 18,
   },
 
   toDo: {
-    backgroundColor: theme.todo,
+    backgroundColor: "white",
+    borderWidth: 1,
     marginBottom: 10,
     paddingVertical: 20,
     paddingHorizontal: 20,
-    borderRadius: 15,
+
+    borderRadius: 30,
+    borderBottomLeftRadius: 0,
+
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
   toDoText: {
+    color: "black",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  toDoEdit: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
+    backgroundColor: "black",
+  },
+  toDoIcon: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
 });
