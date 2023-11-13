@@ -62,7 +62,7 @@ export default function App() {
               unmountOnBlur: true,
             }}
           />
-          <Tab.Screen
+          {/* <Tab.Screen
             name="Information"
             component={Information}
             options={{
@@ -75,7 +75,7 @@ export default function App() {
               ),
               unmountOnBlur: true,
             }}
-          />
+          /> */}
         </Tab.Navigator>
       </NavigationContainer>
     </RecoilRoot>
