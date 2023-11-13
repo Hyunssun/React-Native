@@ -27,7 +27,7 @@ export const Todo = () => {
     }
     const newToDoList = { [Date.now()]: { text, todo }, ...toDoList };
     setToDoList(newToDoList);
-    await save(newToDoList);
+    save(newToDoList);
     setText("");
   };
 
@@ -65,6 +65,16 @@ export const Todo = () => {
     newToDoList[key].isEdit = false;
     setToDoList(newToDoList);
     setEditText("");
+    save(newToDoList);
+  };
+
+  // 완료
+  const onClickCheck = (key: string | number) => {
+    const newToDoList = { ...toDoList };
+    newToDoList[key].check = !newToDoList[key].check;
+    console.log(newToDoList);
+    setToDoList(newToDoList);
+    save(newToDoList);
   };
 
   // 삭제
@@ -130,27 +140,43 @@ export const Todo = () => {
                     style={styles.toDoEdit}
                   />
                 ) : (
-                  <Text style={styles.toDoText}>{toDoList[key].text}</Text>
+                  <Text
+                    style={
+                      toDoList[key].check
+                        ? styles.toDoTextCheck
+                        : styles.toDoText
+                    }
+                  >
+                    {toDoList[key].text}
+                  </Text>
                 )}
 
                 <View style={styles.toDoIcon}>
                   {toDoList[key].isEdit ? (
                     <TouchableOpacity
-                      style={{ marginRight: 10 }}
+                      style={styles.icon}
                       onPress={() => onClickSave(key)}
                     >
                       <Icon name="save-outline" size={22} color="black" />
                     </TouchableOpacity>
                   ) : (
                     <TouchableOpacity
-                      style={{ marginRight: 10 }}
+                      style={styles.icon}
                       onPress={() => onClickEdit(key)}
                     >
                       <Icon name="create-outline" size={22} color="black" />
                     </TouchableOpacity>
                   )}
-
-                  <TouchableOpacity onPress={() => onClickDelete(key)}>
+                  <TouchableOpacity
+                    style={styles.icon}
+                    onPress={() => onClickCheck(key)}
+                  >
+                    <Icon name="checkbox-outline" size={22} color="black" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.icon}
+                    onPress={() => onClickDelete(key)}
+                  >
                     <Icon name="trash-outline" size={22} color="black" />
                   </TouchableOpacity>
                 </View>
@@ -208,6 +234,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
+  toDoTextCheck: {
+    color: theme.point,
+    fontSize: 18,
+    textDecorationLine: "line-through",
+  },
   toDoEdit: {
     color: "white",
     fontSize: 18,
@@ -218,5 +249,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  icon: {
+    marginRight: 10,
   },
 });
